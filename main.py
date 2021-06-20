@@ -7,27 +7,24 @@ screen.title("U.S. States Game")
 image = "states.gif"
 screen.register_shape(image)
 turtle.shape(image)
-count = 0
+tim = Turtle()
+tim.hideturtle()
 correct_states = []
-while True:
-    answer_state = screen.textinput(title=f"{count}/50 U.S. State Game", prompt="What's State name?")
-    answer_state = answer_state.title()
-    data = pandas.read_csv("50_states.csv")
+data = pandas.read_csv("50_states.csv")
+states = data.state.to_list()
+while len(correct_states) < 50:
+    answer_state = screen.textinput(title=f"{len(correct_states)}/50 Correct States",
+                                    prompt="What's State name?").title()
     row = data[data.state == answer_state]
-    states = data.state.to_list()
+    if answer_state == "Exit":
+        break
     if answer_state in states:
-        count += 1
-        coordinates = []
-        x = row.x
-        x = x.to_list()
-        coordinates.append(x[0])
-        y = row.y
-        y = y.to_list()
-        coordinates.append(y[0])
-        tim = Turtle()
+        correct_states.append(answer_state)
+        states.remove(answer_state)
         tim.penup()
-        tim.goto(coordinates[0], coordinates[1])
+        tim.goto(int(row.x), int(row.y))
         tim.pendown()
         tim.write(answer_state)
 
-turtle.mainloop()
+new_data = pandas.DataFrame(states)
+new_data.to_csv("state_to_learn.csv")
